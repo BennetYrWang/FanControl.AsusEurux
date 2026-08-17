@@ -3,11 +3,23 @@ obj/
 artifacts/
 .deps/
 TestResults/
+coverage/
 .vs/
 .idea/
 *.user
 *.suo
+*.log
+*.tmp
+*.bak
+*.pdb
+*.trx
+*.coverage
+*.nupkg
+*.snupkg
 *.zip
+
+.DS_Store
+Thumbs.db
 
 # Local reverse-engineering/tool caches are not project inputs.
 .tools/
