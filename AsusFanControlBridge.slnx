@@ -4,8 +4,4 @@
     <Project Path="src/AsusEurux.Probe/AsusEurux.Probe.csproj" />
     <Project Path="src/FanControl.AsusEurux/FanControl.AsusEurux.csproj" />
   </Folder>
-  <Folder Name="/tests/">
-    <Project Path="tests/AsusEurux.PluginSmokeTests/AsusEurux.PluginSmokeTests.csproj" />
-    <Project Path="tests/AsusEurux.ProtocolTests/AsusEurux.ProtocolTests.csproj" />
-  </Folder>
 </Solution>

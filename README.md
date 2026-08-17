@@ -48,7 +48,6 @@ If FanControl is installed in its default location:
 
 ```powershell
 dotnet build .\AsusFanControlBridge.slnx -c Release
-dotnet run --project .\tests\AsusEurux.ProtocolTests -c Release
 ```
 
 For a reproducible build without a local FanControl installation, fetch the pinned public plugin
@@ -57,13 +56,6 @@ API first:
 ```powershell
 .\scripts\restore-fancontrol-sdk.ps1
 dotnet build .\AsusFanControlBridge.slnx -c Release `
-  -p:FanControlDir="$PWD\.deps\FanControl"
-```
-
-The hardware smoke test requires a connected EURUX controller and is read-only:
-
-```powershell
-dotnet run --project .\tests\AsusEurux.PluginSmokeTests -c Release `
   -p:FanControlDir="$PWD\.deps\FanControl"
 ```
 

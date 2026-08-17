@@ -41,7 +41,6 @@
 
 ```powershell
 dotnet build .\AsusFanControlBridge.slnx -c Release
-dotnet run --project .\tests\AsusEurux.ProtocolTests -c Release
 ```
 
 没有安装 FanControl 时，可先获取 CI 固定版本的公开插件接口：
@@ -49,13 +48,6 @@ dotnet run --project .\tests\AsusEurux.ProtocolTests -c Release
 ```powershell
 .\scripts\restore-fancontrol-sdk.ps1
 dotnet build .\AsusFanControlBridge.slnx -c Release `
-  -p:FanControlDir="$PWD\.deps\FanControl"
-```
-
-硬件冒烟测试需要连接 EURUX 控制器，但测试本身只读：
-
-```powershell
-dotnet run --project .\tests\AsusEurux.PluginSmokeTests -c Release `
   -p:FanControlDir="$PWD\.deps\FanControl"
 ```
 

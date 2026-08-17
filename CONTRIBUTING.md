@@ -22,13 +22,11 @@ Use Windows 10/11 and the .NET 10 SDK. Fetch the pinned FanControl plugin API an
 .\scripts\restore-fancontrol-sdk.ps1
 dotnet build .\AsusFanControlBridge.slnx -c Release `
   -p:FanControlDir="$PWD\.deps\FanControl"
-dotnet run --project .\tests\AsusEurux.ProtocolTests -c Release --no-build `
-  -p:FanControlDir="$PWD\.deps\FanControl"
 ```
 
-The plugin smoke test requires real hardware. Do not add an automated CI test that writes fan
-duty. Any manual write test must start from the current duty, avoid reducing cooling, and restore
-the original value in a `finally` block.
+Local protocol and hardware smoke tests are intentionally kept outside the published repository.
+Do not add an automated CI test that writes fan duty. Any manual write test must start from the
+current duty, avoid reducing cooling, and restore the original value in a `finally` block.
 
 Keep protocol changes isolated in `AsusEurux.Core`, add parser/report tests, and document the
 evidence for new commands without copying proprietary implementation code.

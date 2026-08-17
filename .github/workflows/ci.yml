@@ -34,7 +34,3 @@ jobs:
       - name: Build
         shell: pwsh
         run: dotnet build .\AsusFanControlBridge.slnx -c Release --no-restore -p:FanControlDir="$PWD\.deps\FanControl"
-
-      - name: Protocol tests
-        shell: pwsh
-        run: dotnet run --project .\tests\AsusEurux.ProtocolTests -c Release --no-build

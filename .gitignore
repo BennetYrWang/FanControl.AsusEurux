@@ -4,6 +4,7 @@ artifacts/
 .deps/
 TestResults/
 coverage/
+tests/
 .vs/
 .idea/
 *.user

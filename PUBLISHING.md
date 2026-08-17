@@ -3,7 +3,7 @@
 This file is for maintainers preparing a public release.
 
 1. Build on Windows with the pinned FanControl .NET 10 plugin API.
-2. Run the protocol tests and the read-only hardware smoke test.
+2. Run the maintainer-only local protocol tests and read-only hardware smoke test.
 3. Perform any PWM write validation conservatively and restore the starting duty in `finally`.
 4. Update `VersionPrefix`, release notes, and the tested firmware list.
 5. Commit the release changes and push a signed or annotated `v<semver>` tag.
