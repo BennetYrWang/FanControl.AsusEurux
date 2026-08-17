@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+env:
+  FANCONTROL_VERSION: '273'
+
+jobs:
+  build:
+    runs-on: windows-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Restore FanControl plugin API
+        shell: pwsh
+        run: .\scripts\restore-fancontrol-sdk.ps1 -Version $env:FANCONTROL_VERSION
+
+      - name: Restore
+        shell: pwsh
+        run: dotnet restore .\AsusFanControlBridge.slnx -p:FanControlDir="$PWD\.deps\FanControl"
+
+      - name: Build
+        shell: pwsh
+        run: dotnet build .\AsusFanControlBridge.slnx -c Release --no-restore -p:FanControlDir="$PWD\.deps\FanControl"
+
+      - name: Protocol tests
+        shell: pwsh
+        run: dotnet run --project .\tests\AsusEurux.ProtocolTests -c Release --no-build

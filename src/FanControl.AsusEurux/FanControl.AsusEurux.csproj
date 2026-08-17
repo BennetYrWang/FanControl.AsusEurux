@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <AssemblyName>FanControl.AsusEurux</AssemblyName>
+    <RootNamespace>FanControl.AsusEurux</RootNamespace>
+    <FanControlDir Condition="'$(FanControlDir)' == ''">C:\Program Files (x86)\FanControl</FanControlDir>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../AsusEurux.Core/AsusEurux.Core.csproj" />
+    <Reference Include="FanControl.Plugins">
+      <HintPath>$(FanControlDir)\FanControl.Plugins.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+  <Target Name="ValidateFanControlReference" BeforeTargets="ResolveReferences">
+    <Error
+      Condition="!Exists('$(FanControlDir)\FanControl.Plugins.dll')"
+      Text="FanControl.Plugins.dll was not found under '$(FanControlDir)'. Set -p:FanControlDir=&lt;path&gt;." />
+  </Target>
+</Project>

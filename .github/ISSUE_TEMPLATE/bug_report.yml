@@ -1,0 +1,68 @@
+name: Bug report
+description: Report EURUX detection, RPM, PWM, firmware, or installation problems.
+title: "[Bug]: "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Remove USB serial numbers and unrelated machine details from logs. Do not upload ASUS/ENE DLLs.
+  - type: input
+    id: plugin-version
+    attributes:
+      label: Plugin version
+      placeholder: 0.1.0
+    validations:
+      required: true
+  - type: input
+    id: fancontrol-version
+    attributes:
+      label: FanControl version
+      placeholder: V273 (.NET 10)
+    validations:
+      required: true
+  - type: input
+    id: firmware
+    attributes:
+      label: Controller USB release / firmware
+      placeholder: USB release 0.6
+    validations:
+      required: true
+  - type: input
+    id: windows
+    attributes:
+      label: Windows version
+      placeholder: Windows 11 24H2
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior and sanitized logs
+    validations:
+      required: true
+  - type: dropdown
+    id: write-test
+    attributes:
+      label: Did reproduction write PWM values?
+      options:
+        - No, read-only
+        - Yes
+        - Unknown
+    validations:
+      required: true
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Safety checks
+      options:
+        - label: I closed Armoury Crate's fan-control page before reproducing.
+          required: true
+        - label: I removed device serial numbers and did not attach proprietary DLLs.
+          required: true

@@ -1,0 +1,13 @@
+bin/
+obj/
+artifacts/
+.deps/
+TestResults/
+.vs/
+.idea/
+*.user
+*.suo
+*.zip
+
+# Local reverse-engineering/tool caches are not project inputs.
+.tools/
