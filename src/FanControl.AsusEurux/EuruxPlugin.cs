@@ -10,6 +10,7 @@ public sealed class EuruxPlugin : IPlugin2
     private readonly EuruxFanSensor[] _fanSensors =
         Enumerable.Range(0, EuruxProtocol.PortCount).Select(port => new EuruxFanSensor(port)).ToArray();
     private readonly bool[] _touched = new bool[EuruxProtocol.PortCount];
+    private readonly byte?[] _requestedDuties = new byte?[EuruxProtocol.PortCount];
 
     private EuruxDevice? _device;
     private byte[]? _originalDuties;
@@ -117,17 +118,22 @@ public sealed class EuruxPlugin : IPlugin2
         lock (_gate)
         {
             EnsureReady(port);
-            if (_currentDuties![port] == duty && _touched[port])
+            byte protocolDuty = EuruxCalibration.ToProtocolDuty(duty);
+            if (_currentDuties![port] == protocolDuty && _touched[port])
             {
+                _requestedDuties[port] = duty;
+                _fanSensors[port].SetValue(EuruxCalibration.EstimateRpm(duty));
                 return;
             }
 
             byte previous = _currentDuties[port];
-            _currentDuties[port] = duty;
+            _currentDuties[port] = protocolDuty;
             try
             {
                 _device!.WriteDuties(_currentDuties);
                 _touched[port] = true;
+                _requestedDuties[port] = duty;
+                _fanSensors[port].SetValue(EuruxCalibration.EstimateRpm(duty));
             }
             catch
             {
@@ -153,6 +159,8 @@ public sealed class EuruxPlugin : IPlugin2
             {
                 _device!.WriteDuties(_currentDuties);
                 _touched[port] = false;
+                _requestedDuties[port] = null;
+                _fanSensors[port].Invalidate();
             }
             catch
             {
@@ -182,6 +190,7 @@ public sealed class EuruxPlugin : IPlugin2
         _originalDuties = null;
         _currentDuties = null;
         Array.Clear(_touched);
+        Array.Clear(_requestedDuties);
         _consecutiveUpdateErrors = 0;
 
         foreach (EuruxFanSensor sensor in _fanSensors)
@@ -207,7 +216,11 @@ public sealed class EuruxPlugin : IPlugin2
     {
         for (int port = 0; port < EuruxProtocol.PortCount; port++)
         {
-            _fanSensors[port].SetValue(rpms[port]);
+            byte? requestedDuty = _requestedDuties[port];
+            _fanSensors[port].SetValue(
+                requestedDuty.HasValue
+                    ? EuruxCalibration.EstimateRpm(requestedDuty.Value)
+                    : rpms[port]);
         }
     }
 

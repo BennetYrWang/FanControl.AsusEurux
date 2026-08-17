@@ -14,10 +14,10 @@ internal sealed class EuruxFanSensor(int port) : IPluginSensor
 
     public void Update()
     {
-        // EuruxPlugin.Update performs one transaction for all four RPM values.
+        // EuruxPlugin.Update owns raw polling and calibrated values for all four ports.
     }
 
-    internal void SetValue(ushort rpm) => Value = rpm;
+    internal void SetValue(float rpm) => Value = rpm;
 
     internal void Invalidate() => Value = null;
 }

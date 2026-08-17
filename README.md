@@ -16,8 +16,11 @@ HTTP service.
 
 ## Features
 
-- Four live RPM sensors.
+- Four RPM sensors. Ports controlled by FanControl use a calibrated estimate based on the requested
+  duty; uncontrolled ports continue to show the controller's raw RPM reading.
 - Four 0–100% FanControl control sensors, automatically paired with their RPM sensors.
+- Maps FanControl's logical 0% to protocol duty 1 because firmware 0.6 does not interpret protocol
+  duty 0 as fan stop.
 - Preserves the other three port targets when one port changes.
 - Reasserts active targets on every FanControl update to prevent another ASUS component from
   silently taking control back.
@@ -86,8 +89,11 @@ for normal use.
 
 - Do not keep Armoury Crate's fan-control page active while this plugin controls the same device.
 - Initialization must read all four PWM values successfully before the plugin permits writes.
-- A target of `0` is sent unchanged, but it is not yet known whether every firmware interprets it as
-  fan stop or "do not update this port". Configure a minimum above zero.
+- On tested USB firmware 0.6, protocol duty `0` is a special value and does not stop the fan.
+  FanControl 0% is therefore sent as protocol duty `1`; the raw diagnostic probe remains unchanged.
+- While a port is controlled, its displayed RPM is an estimate: duties below 5% show 0 RPM, 5%
+  shows 300 RPM, and 100% shows 2250 RPM with linear interpolation in between. This estimate cannot
+  detect a stalled or disconnected fan.
 - Restore means the PWM snapshot read at plugin startup; it does not re-enable an Armoury Crate
   temperature curve.
 - The controller may continue reporting its previous configured PWM after a successful write.

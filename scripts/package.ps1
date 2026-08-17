@@ -35,7 +35,8 @@ $packageFiles = @(
     (Join-Path $buildPath 'AsusEurux.Core.dll'),
     (Join-Path $projectRoot 'LICENSE'),
     (Join-Path $projectRoot 'README.md'),
-    (Join-Path $projectRoot 'README.zh-CN.md')
+    (Join-Path $projectRoot 'README.zh-CN.md'),
+    (Join-Path $projectRoot "RELEASE_NOTES_v$Version.md")
 )
 
 foreach ($file in $packageFiles) {
