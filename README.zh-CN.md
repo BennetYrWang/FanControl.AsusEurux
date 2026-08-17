@@ -86,6 +86,47 @@ dotnet run --project .\src\AsusEurux.Probe -- set 1 50 --allow-write
 - “恢复”指恢复插件启动时的 PWM 快照，不是重新启用 Armoury Crate 温控曲线。
 - 控制器在写入成功后仍可能返回旧 PWM 配置值；应通过 RPM 变化确认是否生效。
 
+### 手动释放被 ASUS 服务占用的控制器
+
+如果 Armoury Crate 持续占用控制器，请以管理员身份打开 PowerShell，先搜索相关服务。停止或修改
+前务必确认准确的服务名：
+
+```powershell
+Get-Service | Where-Object {
+  $_.Name -match 'asus|armoury|rog|ene' -or
+  $_.DisplayName -match 'asus|armoury|rog|ene'
+} | Format-Table Name, DisplayName, Status, StartType
+```
+
+将 `$serviceName` 设置为确认过的服务名后停止服务：
+
+```powershell
+$serviceName = 'ConfirmedServiceName'
+Stop-Service -Name $serviceName -Force
+```
+
+之后需要重新启动服务时：
+
+```powershell
+Start-Service -Name $serviceName
+```
+
+设置服务不随系统自动启动：
+
+```powershell
+Set-Service -Name $serviceName -StartupType Disabled
+```
+
+需要恢复自动启动时：
+
+```powershell
+Set-Service -Name $serviceName -StartupType Automatic
+Start-Service -Name $serviceName
+```
+
+不同版本 Armoury Crate 的服务名可能不同。只有确认该服务负责 EURUX 控制后才应禁用它；禁用服务
+也可能影响其他 ASUS 硬件功能。
+
 ## 项目状态
 
 这是早期的硬件专用项目。初版已在一台控制器上验证：1 号端口从 54% 提升至 70% 后，转速由

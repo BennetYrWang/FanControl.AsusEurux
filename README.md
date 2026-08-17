@@ -99,6 +99,47 @@ for normal use.
 - The controller may continue reporting its previous configured PWM after a successful write.
   Verify behavior using RPM, not the returned PWM value.
 
+### Manually release the controller from ASUS services
+
+If Armoury Crate keeps the controller busy, run PowerShell as Administrator and first inspect
+matching services. Confirm the exact service name before stopping or changing anything:
+
+```powershell
+Get-Service | Where-Object {
+  $_.Name -match 'asus|armoury|rog|ene' -or
+  $_.DisplayName -match 'asus|armoury|rog|ene'
+} | Format-Table Name, DisplayName, Status, StartType
+```
+
+After setting `$serviceName` to the confirmed service name, stop it with:
+
+```powershell
+$serviceName = 'ConfirmedServiceName'
+Stop-Service -Name $serviceName -Force
+```
+
+To start it again later:
+
+```powershell
+Start-Service -Name $serviceName
+```
+
+To prevent it from starting automatically:
+
+```powershell
+Set-Service -Name $serviceName -StartupType Disabled
+```
+
+To restore automatic startup when needed:
+
+```powershell
+Set-Service -Name $serviceName -StartupType Automatic
+Start-Service -Name $serviceName
+```
+
+Service names vary between Armoury Crate versions. Only disable a service after confirming that it
+owns the EURUX control path; this may also affect other ASUS hardware features.
+
 ## Project status
 
 This is early hardware-specific software. The initial implementation has been validated on one
