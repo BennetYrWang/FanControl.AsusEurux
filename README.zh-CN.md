@@ -5,11 +5,12 @@
 这是一个面向 Windows 版 [FanControl](https://github.com/Rem0o/FanControl.Releases) 的实验性插件，
 让 FanControl 直接读取和控制 ASUS ROG EURUX GR120 控制器的四个物理风扇端口。
 
-控制器枚举为 `USB VID_0B05 / PID_1D98`。项目直接访问厂商 HID 接口，不依赖 Armoury Crate
-的本机 HTTP 服务，也不包含或分发任何 ASUS/ENE 专有程序库。
+控制器枚举为 `USB VID_0B05 / PID_1D98`。插件运行时使用 Windows 标准 HID 与 SetupAPI
+接口直接访问控制器，不加载或重新分发厂商专有程序库，也不依赖 Armoury Crate 的本机 HTTP
+服务。
 
 > [!WARNING]
-> 这是非官方的逆向硬件集成，目前只在 USB release 0.6 上测试过。测试时请设置保守的最低
+> 这是非官方的实验性硬件集成，目前只在 USB release 0.6 上测试过。测试时请设置保守的最低
 > 转速并持续监控温度。
 
 ## 功能
@@ -19,7 +20,7 @@
 - 修改一路时保留其余三路的目标值。
 - 控制生效期间，每次 FanControl 更新都会重申目标 PWM，避免 ASUS 后台组件静默夺回控制权。
 - 禁用控制或关闭插件时，恢复插件启动时读取到的 PWM 快照。
-- 使用 ENE HAL 的全局硬件互斥锁，减少与 ASUS 软件同时访问 HID 的冲突。
+- 使用全局命名互斥锁串行访问控制器，减少同时访问 HID 的冲突。
 
 同一个 EURUX 端口下菊花链连接的多把风扇只能作为一组调速，不能逐把控制。
 
@@ -89,19 +90,6 @@ dotnet run --project .\src\AsusEurux.Probe -- set 1 50 --allow-write
 - “恢复”指恢复插件启动时的 PWM 快照，不是重新启用 Armoury Crate 温控曲线。
 - 控制器在写入成功后仍可能返回旧 PWM 配置值；应通过 RPM 变化确认是否生效。
 
-## 协议记录
-
-HID Report ID 为 `0x90`，Feature Report 长度为 32 字节，Input Report 长度为 65 字节。
-
-| 操作 | Feature Report 前缀 | 响应 |
-| --- | --- | --- |
-| 查询 PWM | `90 05 00` | `90 F0 90 p1 p2 p3 p4 ...` |
-| 查询 RPM | `90 05 01` | `90 F1 rpm1_be rpm2_be rpm3_be rpm4_be ...` |
-| 设置 PWM | `90 04 p1 p2 p3 p4` | 无读取响应 |
-
-协议通过观察并分析 ENE Fan HAL 1.0.18.1 的行为整理。仓库不包含或重新分发 ASUS/ENE 二进制
-文件或源码。
-
 ## 项目状态
 
 这是早期的硬件专用项目。初版已在一台控制器上验证：1 号端口从 54% 提升至 70% 后，转速由
@@ -113,4 +101,4 @@ HID Report ID 为 `0x90`，Feature Report 长度为 32 字节，Input Report 长
 ## 许可证与商标
 
 本仓库源码采用 [MIT License](LICENSE)。ASUS、ROG、EURUX、Armoury Crate 等商标归其
-权利人所有；FanControl 是独立项目。本仓库与 ASUS、ENE 或 FanControl 均无隶属或背书关系。
+权利人所有；FanControl 是独立项目。本仓库与 ASUS 或 FanControl 均无隶属或背书关系。

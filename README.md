@@ -5,12 +5,13 @@
 An experimental Windows plugin that lets [FanControl](https://github.com/Rem0o/FanControl.Releases)
 read and control the four physical fan ports on the ASUS ROG EURUX GR120 controller.
 
-The controller is identified as `USB VID_0B05 / PID_1D98`. This project talks directly to its
-vendor HID interface and does not require the Armoury Crate local HTTP service or ship any
-ASUS/ENE proprietary library.
+The controller is identified as `USB VID_0B05 / PID_1D98`. At runtime, the plugin uses the standard
+Windows HID and SetupAPI interfaces to communicate directly with the controller. It does not load
+or redistribute proprietary controller libraries and does not depend on the Armoury Crate local
+HTTP service.
 
 > [!WARNING]
-> This is an unofficial, reverse-engineered hardware integration. It has only been tested with
+> This is an unofficial, experimental hardware integration. It has only been tested with
 > USB release 0.6. Use conservative minimum fan speeds and monitor temperatures while testing.
 
 ## Features
@@ -21,7 +22,7 @@ ASUS/ENE proprietary library.
 - Reasserts active targets on every FanControl update to prevent another ASUS component from
   silently taking control back.
 - Restores the PWM snapshot captured at plugin startup when a control is reset or the plugin closes.
-- Uses the same global hardware mutex as the installed ENE HAL to reduce concurrent HID access.
+- Serializes controller access with a global named mutex to reduce concurrent HID access.
 
 Fans daisy-chained to the same EURUX port are controlled as one group; individual fans within a
 chain cannot be controlled independently.
@@ -100,19 +101,6 @@ for normal use.
 - The controller may continue reporting its previous configured PWM after a successful write.
   Verify behavior using RPM, not the returned PWM value.
 
-## Protocol notes
-
-The HID report ID is `0x90`; feature reports are 32 bytes and input reports are 65 bytes.
-
-| Operation | Feature report prefix | Response |
-| --- | --- | --- |
-| Query PWM | `90 05 00` | `90 F0 90 p1 p2 p3 p4 ...` |
-| Query RPM | `90 05 01` | `90 F1 rpm1_be rpm2_be rpm3_be rpm4_be ...` |
-| Set PWM | `90 04 p1 p2 p3 p4` | No input response |
-
-The protocol was documented through observation and analysis of ENE Fan HAL 1.0.18.1 behavior.
-No ASUS/ENE binary or source code is included or redistributed.
-
 ## Project status
 
 This is early hardware-specific software. The initial implementation has been validated on one
@@ -126,4 +114,4 @@ Contributions and additional firmware reports are welcome. See [CONTRIBUTING.md]
 Source code in this repository is licensed under the [MIT License](LICENSE).
 
 ASUS, ROG, EURUX, Armoury Crate, and related marks belong to their respective owners. FanControl is
-a separate project. This repository is not affiliated with or endorsed by ASUS, ENE, or FanControl.
+a separate project. This repository is not affiliated with or endorsed by ASUS or FanControl.
